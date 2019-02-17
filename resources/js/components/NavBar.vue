@@ -18,6 +18,7 @@
             <v-spacer/>
             <v-icon>arrow_drop_down</v-icon>
         </v-btn>
+        
       <v-list>
         <v-list-tile :to="{ name: 'settings.profile' }">
           <v-list-tile-title>{{ $t('settings') }}</v-list-tile-title>
@@ -49,6 +50,7 @@ export default {
 
   data: () => ({
     appName: window.config.appName
+    
   }),
 
   computed: mapGetters({

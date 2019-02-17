@@ -26,7 +26,7 @@ axios.interceptors.request.use(request => {
 // 响应拦截
 axios.interceptors.response.use(response => response, error => {
   const { status } = error.response
-
+  console.log(response)
   if (status >= 500) {
     console.log({
       type: 'error',
@@ -39,18 +39,10 @@ axios.interceptors.response.use(response => response, error => {
   }
 
   if (status === 401 && store.getters['auth/check']) {
-    console.log({
-      type: 'warning',
-      title: i18n.t('token_expired_alert_title'),
-      text: i18n.t('token_expired_alert_text'),
-      reverseButtons: true,
-      confirmButtonText: i18n.t('ok'),
-      cancelButtonText: i18n.t('cancel')
-    }).then(() => {
-      store.commit('auth/LOGOUT')
+    
+    store.commit('auth/LOGOUT')
 
-      router.push({ name: 'login' })
-    })
+    router.push({ name: 'login' })
   }
 
   return Promise.reject(error)
