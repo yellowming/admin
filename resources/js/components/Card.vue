@@ -1,13 +1,23 @@
 <template>
-  <div class="card">
-    <div v-if="title" class="card-header">
-      {{ title }}
-    </div>
-
-    <div class="card-body">
-      <slot/>
-    </div>
-  </div>
+  <v-snackbar
+      v-model="snackbar"
+      :bottom="y === 'bottom'"
+      :left="x === 'left'"
+      :multi-line="mode === 'multi-line'"
+      :right="x === 'right'"
+      :timeout="timeout"
+      :top="y === 'top'"
+      :vertical="mode === 'vertical'"
+    >
+      {{ text }}
+      <v-btn
+        color="pink"
+        flat
+        @click="snackbar = false"
+      >
+        Close
+      </v-btn>
+    </v-snackbar>
 </template>
 
 <script>

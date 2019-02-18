@@ -8,7 +8,7 @@
 <v-card>
   <v-card-title primary-title>
     <v-dialog v-model="dialog" persistent max-width="600px">
-  <v-btn fab dark small slot="activator" color="success">
+  <v-btn fab dark slot="activator" color="success">
       <v-icon dark>add</v-icon>
     </v-btn>
       <v-card>
@@ -16,25 +16,20 @@
           <span class="headline">新增用户</span>
         </v-card-title>
         <v-card-text>
-                <v-text-field
-                  label="用户名*"
-                  required
-                ></v-text-field>
-                <v-text-field label="邮箱*" flat name="email" type="email" browser-autocomplete="xc" required></v-text-field>
-                <v-text-field label="密码*" name="password" type="password" value=" " required></v-text-field>
+                <v-text-field label="用户名*" v-model="dialogForm.name" required autocomplete="off"></v-text-field>
+                <v-text-field label="邮箱*" v-model="dialogForm.email" name="email" type="email" autocomplete="off" required></v-text-field>
+                <v-text-field label="密码*" v-model="dialogForm.password" name="password" type="password" autocomplete="new-password" required></v-text-field>
             
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" flat @click="dialog = false">关闭</v-btn>
-          <v-btn color="blue darken-1" flat @click="dialog = false">保存</v-btn>
+          <v-btn color="blue darken-1" flat @click="dialogFormReset">关闭</v-btn>
+          <v-btn color="blue darken-1" flat @click="dialogFormSubmit">保存</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
     
-    <v-btn fab dark small color="error" v-if="selected.length >= 1">
-      <v-icon dark>delete</v-icon>
-    </v-btn>
+    
     <v-spacer></v-spacer>
       <v-text-field
         append-icon="search"
@@ -47,25 +42,24 @@
   </v-card-title>
 
   <v-data-table
-    v-model="selected"
     :headers="headers"
     :items="desserts"
     :loading="userLoading"
     item-key="name"
-    select-all
   >
     <template slot="items" slot-scope="props">
-      <td>
-          <v-checkbox
-            :input-value="props.selected"
-            primary
-            hide-details
-          ></v-checkbox>
-      </td>
       <td>{{ props.item.id }}</td>
       <td>{{ props.item.name }}</td>
       <td>{{ props.item.email }}</td>
       <td>{{ props.item.created_at }}</td>
+      <td>
+        <v-btn color="info" flat icon @click="dialog = false">
+          <v-icon dark>edit</v-icon>
+        </v-btn>
+        <v-btn color="error" flat icon @click="dialog = false">
+          <v-icon dark>delete</v-icon>
+        </v-btn>
+      </td>
     </template>
   </v-data-table>
 </v-card>
@@ -85,18 +79,17 @@
     data () {
       return {
         headers: [
-          {
-            text: 'ID',
-            align: 'left',
-            sortable: false,
-            value: 'id'
-          },
+          { text: 'ID', value: 'id' },
           { text: '用户名', value: 'name' },
           { text: '邮箱', value: 'email' },
           { text: '创建时间', value: 'created_at' },
-          
+          { text: '', value:'', sortable: false}
         ],
-        selected: [],
+        dialogForm: {
+          name: '',
+          email: '',
+          password: ''
+        },
         userLoading: false,
         desserts: [],
         dialog: false,
@@ -123,6 +116,21 @@
     mounted: function (){
       
       
+    },
+    methods:{
+      dialogFormSubmit(){
+        this.axios.post('user/add',this.dialogForm)
+        .then(function(Response){
+          console.log(Response)
+        })
+      },
+      dialogFormReset(){
+        this.dialogForm = {
+          name: '',
+          email: '',
+          password: ''
+        }
+      }
     }
   }
 </script>

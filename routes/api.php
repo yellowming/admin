@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
 Route::group([
 
     'prefix' => 'auth'
@@ -30,4 +26,5 @@ Route::group([
 
 });
 
-Route::get('user/list', 'UserController@userList');
+Route::get('user/list', 'UserController@list');
+Route::post('user/add', 'UserController@add');
