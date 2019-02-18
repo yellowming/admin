@@ -120,11 +120,10 @@
     methods:{
       dialogFormSubmit(){
         this.axios.post('user/add',this.dialogForm)
-        .then(function(Response){
-          console.log(Response)
-        })
+        .then(Response => (this.dialog = false))
       },
       dialogFormReset(){
+        this.dialog = false
         this.dialogForm = {
           name: '',
           email: '',
