@@ -1,6 +1,6 @@
 <template>
 
- <v-menu offset-y open-on-hover>
+ <v-menu offset-y>
       <v-btn
         flat
         slot="activator"

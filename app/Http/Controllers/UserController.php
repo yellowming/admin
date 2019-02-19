@@ -27,8 +27,10 @@ class UserController extends Controller
     {
         //1.验证字段格式
         //2.通过email查重
+        $add = $request->all();
+        $add["password"] = bcrypt($add["password"]);
         try{
-            return User::create($request->all());
+            return User::create($add);
         }catch(Exception $e){
             dd($e);
         };
@@ -42,7 +44,11 @@ class UserController extends Controller
     public function edite(Request $request)
     {
         $update = $request->all();
-        if(!$update["password"]) unset($update["password"]); 
+        if($update["password"]){
+            $update["password"] = bcrypt($update["password"]);
+        }else{
+            unset($update["password"]);
+        }; 
         return User::where('id', $request->id)->update($update);
     }
 }
