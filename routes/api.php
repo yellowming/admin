@@ -13,18 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::group([
-
-    'prefix' => 'auth'
-
-], function ($router) {
-
+Route::group(['prefix' => 'auth'], function ($router) {
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
-
 });
 
-Route::get('user/list', 'UserController@list');
-Route::post('user/add', 'UserController@add');
+Route::group(['prefix' => 'user'], function ($router) {
+    Route::get('list', 'UserController@list');
+    Route::post('add', 'UserController@add');
+    Route::delete('delete', 'UserController@delete');
+});
