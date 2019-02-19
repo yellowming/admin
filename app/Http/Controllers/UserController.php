@@ -14,7 +14,8 @@ class UserController extends Controller
         $this->middleware('auth:api');
     }
     //
-    public function list(Request $request){
+    public function list(Request $request)
+    {
         //用户列表筛选查询
         $data = User::where('id','>',0);
         if($request->search) $data->where('name', 'like', "{$request->search}%")->orWhere('email', 'like', "%{$request->search}%");
@@ -24,7 +25,8 @@ class UserController extends Controller
         ]);
     }
 
-    public function add(Request $request){
+    public function add(Request $request)
+    {
         //1.验证字段格式
         //2.通过email查重
         try{
@@ -34,7 +36,14 @@ class UserController extends Controller
         };
     }
 
-    public function delete(Request $request){
+    public function delete(Request $request)
+    {
         return User::where('id', '=', $request->id)->delete();
+    }
+
+    public function edite(Request $request)
+    {
+        $update = $request->all();
+        return User::where('id', $request->id)->update($update);
     }
 }

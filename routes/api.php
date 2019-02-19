@@ -23,5 +23,6 @@ Route::group(['prefix' => 'auth'], function ($router) {
 Route::group(['prefix' => 'user'], function ($router) {
     Route::get('list', 'UserController@list');
     Route::post('add', 'UserController@add');
+    Route::post('edite', 'UserController@edite');
     Route::delete('delete', 'UserController@delete');
 });

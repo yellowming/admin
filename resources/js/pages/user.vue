@@ -53,10 +53,10 @@
       <td>{{ props.item.email }}</td>
       <td>{{ props.item.created_at }}</td>
       <td>
-        <v-btn color="info" flat icon @click="dialog = false">
+        <v-btn color="info" flat icon @click="userEdite(props.item)">
           <v-icon dark>edit</v-icon>
         </v-btn>
-        <v-btn color="error" flat icon @click="userDelete(props)">
+        <v-btn color="error" flat icon @click="userDelete(props.item)">
           <v-icon dark>delete</v-icon>
         </v-btn>
       </td>
@@ -151,15 +151,22 @@
         }
       },
       userDelete(user){
-        if(confirm("警告：确定删除用户"+user.item.name+"吗？删除后无法恢复！！！！")){
+        if(confirm("警告：确定删除用户"+user.name+"吗？删除后无法恢复！！！！")){
           this.axios.delete('user/delete',{
-            data:{id:user.item.id}
+            data:{id:user.id}
           }).then(Response => {
             this.getUsersFromApi()
           })
           console.log(user)
         }
-        
+      },
+      userEdite(user){
+        this.dialogForm = {
+          name: user.name,
+          email: user.email,
+          password: ""
+        }
+        this.dialog = true
       }
     }
   }
