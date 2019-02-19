@@ -18,12 +18,12 @@
     </v-btn>
       <v-card>
         <v-card-title>
-          <span class="headline">新增用户</span>
+          <span class="headline">{{ isEdite?"编辑用户":"新增用户"}}</span>
         </v-card-title>
         <v-card-text>
-          <v-text-field label="用户名*" v-model="dialogForm.name" required autocomplete="off"></v-text-field>
-          <v-text-field label="邮箱*" v-model="dialogForm.email" name="email" type="email" autocomplete="off" required></v-text-field>
-          <v-text-field label="密码*" v-model="dialogForm.password" name="password" type="password" autocomplete="new-password" required></v-text-field>
+          <v-text-field label="用户名" v-model="dialogForm.name" required autocomplete="off"></v-text-field>
+          <v-text-field label="邮箱" v-model="dialogForm.email" name="email" type="email" autocomplete="off" required></v-text-field>
+          <v-text-field label="密码" hint="密码为空时不修改密码" :persistent-hint="isEdite" v-model="dialogForm.password" name="password" type="password" autocomplete="new-password" required></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -41,11 +41,11 @@
     :total-items="totalUsers"
     :pagination.sync="pagination"
     :rows-per-page-items="pageItems"
-    must-sort
-    item-key="name"
     no-data-text="没有数据"
     rows-per-page-text="每页显示"
     class="elevation-1"
+    must-sort
+    @update:pagination="paginatorUpdate"
   >
     <template slot="items" slot-scope="props">
       <td>{{ props.item.id }}</td>
@@ -89,12 +89,13 @@
           { text: '创建时间', value: 'created_at' },
           { text: '', value:'', sortable: false}
         ],
-        
+        apiTimer: null,
         dialogForm: {
           name: '',
           email: '',
           password: ''
         },
+        isEdite: false,
         dialog: false,
         breadcrumbs: [
           { text: '首页', disabled: false, to: '/' },
@@ -103,27 +104,22 @@
       
       }
     },
-    mounted (){
-      
-    },
-    watch: {
-      pagination: {
-        handler () {
-          this.getUsersFromApi();
-        },
-        deep: true
-      }
-    },
     methods:{
+      paginatorUpdate(){
+        //组件有个bug，点击排序概率出现两次分页数据更新事件
+        clearTimeout(this.apiTimer);
+        this.apiTimer = setTimeout(this.getUsersFromApi,100)
+      },
       getUsersFromApi(){
         this.userListLoading = true
-        this.axios.get('user/list',{ params:{
+        let params = {
           page: this.pagination.page,//当前页
           row: this.pagination.rowsPerPage,//每页大小
           sortBy: this.pagination.sortBy, //分页字段
           desc: this.pagination.descending,//第几页
-          search: this.searcher.value,//查询条件
-        }})
+          search: this.searcher.value //查询条件
+        }
+        this.axios.get('user/list',{ params })
         .then(Response => {
           this.userListLoading = false
           this.userList = Response.data.success.data
@@ -131,11 +127,13 @@
         })
       },
       searchEvent(){
+        let oldValue = this.searcher.value
         this.searcher.value = this.searcher.input==""?null:this.searcher.input
-        this.getUsersFromApi()
+        if(oldValue !== this.searcher.value) this.getUsersFromApi()
       },
       dialogFormSubmit(){
-        this.axios.post('user/add',this.dialogForm)
+        let apiUrl = this.isEdite?'user/edite':'user/add'
+        this.axios.post(apiUrl,this.dialogForm)
         .then(Response => {
           this.dialog = false
           this.dialogFormReset()
@@ -144,6 +142,7 @@
       },
       dialogFormReset(){
         this.dialog = false
+        this.isEdite = false
         this.dialogForm = {
           name: '',
           email: '',
@@ -157,15 +156,16 @@
           }).then(Response => {
             this.getUsersFromApi()
           })
-          console.log(user)
         }
       },
       userEdite(user){
         this.dialogForm = {
           name: user.name,
           email: user.email,
-          password: ""
+          password: "",
+          id: user.id
         }
+        this.isEdite = true
         this.dialog = true
       }
     }

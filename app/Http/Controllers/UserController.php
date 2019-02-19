@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Pagination\Paginator;
 
 class UserController extends Controller
 {
@@ -44,6 +42,7 @@ class UserController extends Controller
     public function edite(Request $request)
     {
         $update = $request->all();
+        if(!$update["password"]) unset($update["password"]); 
         return User::where('id', $request->id)->update($update);
     }
 }
