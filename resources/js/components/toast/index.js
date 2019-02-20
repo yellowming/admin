@@ -3,33 +3,35 @@ import ToastComponent from './ToastComponent.vue'
 
 let ToastTem = Vue.extend(ToastComponent)
 let instance
+let Timer
 let Toast = (options) => {
   if (!instance) {
     instance = new ToastTem()
-    instance.timeout = 7000000
     instance.vm = instance.$mount()
     document.body.appendChild(instance.vm.$el)
+  }else{
+    instance.show = false
   }
-  console.log(options)
-  
-  let time = 3000
+  clearTimeout(Timer)
+  Timer = setTimeout(() => {
+    instance.show = true
+  },500)
   if (typeof options === 'string') {
     instance.message = options
   } else if (typeof options === 'object') {
-    let {message, time} = options
+    let {message, time, color} = options
     instance.message = message
-    time = time || 3000
+    instance.color = color || "success"
+    instance.timeout = time || 3000
   } else {
     return
   }
-  console.log()
-  instance.show = true
-  instance.timeout = time
 }
 
 Toast.install = (Vue) => {
-  console.log('install--------Toast')
   Vue.prototype.$toast = Toast
 }
 
-Vue.use(Toast)
+export default Toast
+
+

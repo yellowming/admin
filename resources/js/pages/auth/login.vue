@@ -10,7 +10,6 @@
                   v-model="valid"
                   lazy-validation
                   @submit.prevent="login"
-                  @keydown="form.onKeydown($event)"
                 >
               <v-toolbar dark color="primary">
                 <v-toolbar-title>{{ $t('login') }}</v-toolbar-title>
@@ -73,8 +72,10 @@ export default {
         email: this.email,
         password: this.password,
         remember: this.remember
+      }).catch( e => {
+        this.loading = false
+        this.$toast({message: '登录失败！请检查', time: 3000, color:'error'})
       })
-      this.loading = false
       // Save the token.
       this.$store.dispatch('auth/saveToken', {
         token: data.token_type + " " + data.access_token,
@@ -82,7 +83,12 @@ export default {
       })
       // Fetch the user.
       await this.$store.dispatch('auth/fetchUser')
-
+      .catch(e => {
+        this.loading = false
+        this.$toast({message: '登录失败！请检查', color:'error'})
+      })
+      this.$toast("登录成功")
+      this.loading = false
       // Redirect home.
       this.$router.push({ name: 'home' })
     }

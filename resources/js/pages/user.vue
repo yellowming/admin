@@ -105,8 +105,7 @@
       }
     },
     mounted(){
-      console.log(this.$toast)
-      this.$toast({message: '33333', time: 30000})
+      
     },
     methods:{
       paginatorUpdate(){
@@ -140,6 +139,7 @@
         this.axios.post(apiUrl,this.dialogForm)
         .then(Response => {
           this.dialog = false
+          this.$toast(this.isEdite?'修改成功！':'添加成功！')
           this.dialogFormReset()
           this.getUsersFromApi()
         })
@@ -158,6 +158,7 @@
           this.axios.delete('user/delete',{
             data:{id:user.id}
           }).then(Response => {
+            this.$toast("删除成功！")
             this.getUsersFromApi()
           })
         }

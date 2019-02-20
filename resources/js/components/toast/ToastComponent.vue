@@ -2,9 +2,10 @@
   <v-snackbar
       v-model="show"
       auto-height
-      top
+      bottom
       right
-      color="success"
+      absolute
+      :color="color"
       :timeout="timeout"
     >
       {{message}}
@@ -19,7 +20,8 @@ export default {
     return {
       message: '',
       show: false,
-      timeout: 3000
+      timeout: 3000,
+      color: "success"
     }
   }
 }
