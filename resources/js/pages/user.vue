@@ -104,6 +104,10 @@
       
       }
     },
+    mounted(){
+      console.log(this.$toast)
+      this.$toast({message: '33333', time: 30000})
+    },
     methods:{
       paginatorUpdate(){
         //组件有个bug，点击排序概率出现两次分页数据更新事件

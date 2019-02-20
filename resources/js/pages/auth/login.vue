@@ -28,7 +28,7 @@
                 {{ $t('forgot_password') }}
               </router-link>
                 <v-spacer></v-spacer>
-                <v-btn color="primary" type="submit">{{ $t('login') }}</v-btn>
+                <v-btn color="primary" :loading="loading" type="submit">{{ $t('login') }}</v-btn>
               </v-card-actions>
               </v-form>
             </v-card>
@@ -54,6 +54,7 @@ export default {
       valid: true,
       email: '867822412@qq.com',
       password: '4356465754676',
+      loading: false,
       emailRules: [
         v => !!v || '请输入邮箱',
         v => /.+@.+/.test(v) || '邮箱格式不正确'
@@ -67,13 +68,13 @@ export default {
   methods: {
     async login () {
       // Submit the form.
-      
+      this.loading = true
       const { data } = await this.$store.dispatch('auth/login', {
         email: this.email,
         password: this.password,
         remember: this.remember
       })
-
+      this.loading = false
       // Save the token.
       this.$store.dispatch('auth/saveToken', {
         token: data.token_type + " " + data.access_token,
